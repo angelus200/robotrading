@@ -1,9 +1,12 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 
-// Dev-Mode: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY === 'pk_test_dummy'
+// Auth-Mock-Modus: kein Clerk wenn Key fehlt, leer oder als Dummy gesetzt
+const _clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 const IS_DEV_MOCK =
-  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY === 'pk_test_dummy'
+  !_clerkKey ||
+  _clerkKey === 'pk_test_dummy' ||
+  _clerkKey.startsWith('pk_test_dummy')
 
 const isProtectedRoute = createRouteMatcher([
   '/dashboard(.*)',
