@@ -1,0 +1,184 @@
+// Prisma Schema — robotrading.net
+// Datenbankmodell für automatisierte Handelsstrategien
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  INACTIVE
+  CANCELED
+  PAST_DUE
+  TRIALING
+}
+
+enum StrategyStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  STOPPED
+}
+
+enum TradeDirection {
+  LONG
+  SHORT
+}
+
+enum TradeStatus {
+  OPEN
+  CLOSED
+  CANCELED
+}
+
+// ─── Models ───────────────────────────────────────────────────────────────────
+
+model User {
+  id               String   @id @default(cuid())
+  clerkId          String   @unique
+  email            String   @unique
+  name             String?
+  avatarUrl        String?
+  role             UserRole @default(USER)
+  stripeCustomerId String?  @unique
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  subscription Subscription?
+  strategies   Strategy[]
+  portfolios   Portfolio[]
+
+  @@index([clerkId])
+  @@index([email])
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String             @unique
+  stripeSubscriptionId String             @unique
+  stripePriceId        String
+  stripeProductId      String
+  status               SubscriptionStatus
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+  cancelAtPeriodEnd    Boolean            @default(false)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Strategy {
+  id          String         @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  status      StrategyStatus @default(DRAFT)
+  config      Json           @default("{}")
+  brokerId    String?
+  isPublic    Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  broker    Broker?    @relation(fields: [brokerId], references: [id])
+  trades    Trade[]
+  portfolio Portfolio?
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Portfolio {
+  id             String  @id @default(cuid())
+  userId         String
+  strategyId     String  @unique
+  name           String
+  initialCapital Decimal @db.Decimal(18, 8)
+  currentValue   Decimal @db.Decimal(18, 8)
+  currency       String  @default("EUR")
+  totalPnl       Decimal @default(0) @db.Decimal(18, 8)
+  totalPnlPct    Decimal @default(0) @db.Decimal(8, 4)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  strategy Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Trade {
+  id         String         @id @default(cuid())
+  strategyId String
+  symbol     String
+  direction  TradeDirection
+  status     TradeStatus    @default(OPEN)
+  entryPrice Decimal        @db.Decimal(18, 8)
+  exitPrice  Decimal?       @db.Decimal(18, 8)
+  quantity   Decimal        @db.Decimal(18, 8)
+  pnl        Decimal?       @db.Decimal(18, 8)
+  pnlPct     Decimal?       @db.Decimal(8, 4)
+  openedAt   DateTime       @default(now())
+  closedAt   DateTime?
+  metadata   Json           @default("{}")
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  strategy Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
+
+  @@index([strategyId])
+  @@index([symbol])
+  @@index([status])
+}
+
+model Broker {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  logoUrl     String?
+  website     String?
+  isActive    Boolean  @default(true)
+  features    Json     @default("[]")
+  minDeposit  Decimal? @db.Decimal(18, 2)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  strategies Strategy[]
+
+  @@index([slug])
+}
+
+model BlogPost {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  title       String
+  excerpt     String?
+  content     String
+  coverImage  String?
+  published   Boolean   @default(false)
+  publishedAt DateTime?
+  authorId    String
+  tags        String[]
+  readingTime Int?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([slug])
+  @@index([published, publishedAt])
+}
