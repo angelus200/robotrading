@@ -4,20 +4,20 @@ import { PublicHeader } from '@/components/public/public-header'
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col bg-[#0F172A]">
+    <div className="flex min-h-screen flex-col bg-white">
       <PublicHeader />
 
       <main className="flex-1">{children}</main>
 
-      {/* Footer */}
-      <footer className="border-t border-[#334155] bg-[#0A0F1E]">
+      {/* Footer — dunkel wie auf robotrading.net */}
+      <footer className="border-t border-[#243040] bg-[#1A2332]">
         <div className="mx-auto max-w-7xl px-6 py-12">
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             {/* Unternehmen */}
             <div>
               <div className="mb-4">
                 <div className="text-base font-bold text-white">ROBOTRADING.NET</div>
-                <div className="text-xs text-blue-400">Ihr Sprung in die Gewinnzone!</div>
+                <div className="text-xs text-[#4DA8DA]">Ihr Sprung in die Gewinnzone!</div>
               </div>
               <address className="not-italic space-y-1 text-sm text-[#94A3B8]">
                 <p className="font-semibold text-[#CBD5E1]">Activa Fintech Processing KG</p>
@@ -39,7 +39,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                   Email:{' '}
                   <a
                     href="mailto:office@angelus.group"
-                    className="text-blue-400 hover:text-blue-300 transition-colors"
+                    className="text-[#4DA8DA] hover:text-[#6BBFE8] transition-colors"
                   >
                     office@angelus.group
                   </a>
@@ -56,7 +56,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                     href="https://www.facebook.com/profile.php?id=61575952515839"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#334155] text-[#94A3B8] hover:border-blue-500 hover:text-blue-400 transition-colors"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#334155] text-[#94A3B8] hover:border-[#4DA8DA] hover:text-[#4DA8DA] transition-colors"
                     aria-label="Facebook"
                   >
                     <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
@@ -67,7 +67,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                     href="https://www.instagram.com/robotradingnet/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#334155] text-[#94A3B8] hover:border-blue-500 hover:text-blue-400 transition-colors"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#334155] text-[#94A3B8] hover:border-[#4DA8DA] hover:text-[#4DA8DA] transition-colors"
                     aria-label="Instagram"
                   >
                     <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
@@ -131,14 +131,14 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
           </div>
 
           {/* Bottom Bar */}
-          <div className="mt-10 border-t border-[#334155] pt-6 text-center text-xs text-[#475569]">
+          <div className="mt-10 border-t border-[#334155] pt-6 text-center text-xs text-[#64748B]">
             <p>
               © {new Date().getFullYear()} Activa Fintech Processing KG · Robotrading.net · Alle Rechte
               vorbehalten
             </p>
             <p className="mt-1">
               CFD-Handel birgt ein hohes Risiko. Lesen Sie unsere{' '}
-              <Link href="/risikohinweise" className="text-blue-500 hover:text-blue-400 transition-colors">
+              <Link href="/risikohinweise" className="text-[#4DA8DA] hover:text-[#6BBFE8] transition-colors">
                 Risikohinweise
               </Link>
               .

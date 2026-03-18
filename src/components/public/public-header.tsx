@@ -29,16 +29,16 @@ export function PublicHeader() {
   const [beratungOpen, setBeratungOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#334155] bg-[#0F172A]/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 border-b border-[#243040] bg-[#1A2332]/95 backdrop-blur-sm">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex h-16 items-center justify-between gap-4">
           {/* Logo */}
           <Link href="/landing" className="flex-shrink-0 group">
             <div className="leading-tight">
-              <div className="text-lg font-extrabold tracking-wide text-white group-hover:text-blue-400 transition-colors">
+              <div className="text-lg font-extrabold tracking-wide text-white group-hover:text-[#4DA8DA] transition-colors">
                 ROBOTRADING.NET
               </div>
-              <div className="text-[10px] font-medium tracking-widest text-blue-400 uppercase">
+              <div className="text-[10px] font-medium tracking-widest text-[#4DA8DA] uppercase">
                 Ihr Sprung in die Gewinnzone!
               </div>
             </div>
@@ -50,7 +50,7 @@ export function PublicHeader() {
               item.dropdown ? (
                 <div key={item.label} className="relative group">
                   <button
-                    className="flex items-center gap-1 rounded px-2.5 py-2 text-sm text-[#94A3B8] hover:text-white hover:bg-[#1E293B] transition-colors whitespace-nowrap"
+                    className="flex items-center gap-1 rounded px-2.5 py-2 text-sm text-[#94A3B8] hover:text-white hover:bg-[#243040] transition-colors whitespace-nowrap"
                     onClick={() => setBeratungOpen(!beratungOpen)}
                     onMouseEnter={() => setBeratungOpen(true)}
                     onMouseLeave={() => setBeratungOpen(false)}
@@ -60,7 +60,7 @@ export function PublicHeader() {
                   </button>
                   {beratungOpen && (
                     <div
-                      className="absolute left-0 top-full mt-0 w-52 rounded-lg border border-[#334155] bg-[#1E293B] py-1 shadow-xl"
+                      className="absolute left-0 top-full mt-0 w-52 rounded-lg border border-[#334155] bg-[#243040] py-1 shadow-xl"
                       onMouseEnter={() => setBeratungOpen(true)}
                       onMouseLeave={() => setBeratungOpen(false)}
                     >
@@ -68,7 +68,7 @@ export function PublicHeader() {
                         <Link
                           key={sub.label}
                           href={sub.href}
-                          className="block px-4 py-2.5 text-sm text-[#94A3B8] hover:bg-[#0F172A] hover:text-white transition-colors"
+                          className="block px-4 py-2.5 text-sm text-[#94A3B8] hover:bg-[#1A2332] hover:text-white transition-colors"
                         >
                           {sub.label}
                         </Link>
@@ -80,7 +80,7 @@ export function PublicHeader() {
                 <Link
                   key={item.label}
                   href={item.href}
-                  className="rounded px-2.5 py-2 text-sm text-[#94A3B8] hover:text-white hover:bg-[#1E293B] transition-colors whitespace-nowrap"
+                  className="rounded px-2.5 py-2 text-sm text-[#94A3B8] hover:text-white hover:bg-[#243040] transition-colors whitespace-nowrap"
                 >
                   {item.label}
                 </Link>
@@ -98,7 +98,7 @@ export function PublicHeader() {
             </Link>
             <Link
               href="/sign-up"
-              className="rounded-md bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-blue-500 transition-colors"
+              className="rounded-md bg-[#4DA8DA] px-4 py-1.5 text-sm font-semibold text-white hover:bg-[#3A8BC2] transition-colors"
             >
               Kostenlos starten
             </Link>
@@ -106,7 +106,7 @@ export function PublicHeader() {
 
           {/* Mobile Hamburger */}
           <button
-            className="xl:hidden rounded p-2 text-[#94A3B8] hover:text-white hover:bg-[#1E293B] transition-colors"
+            className="xl:hidden rounded p-2 text-[#94A3B8] hover:text-white hover:bg-[#243040] transition-colors"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Navigation öffnen"
           >
@@ -117,7 +117,7 @@ export function PublicHeader() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="xl:hidden border-t border-[#334155] bg-[#0F172A] px-4 pb-4">
+        <div className="xl:hidden border-t border-[#243040] bg-[#1A2332] px-4 pb-4">
           <nav className="flex flex-col pt-2">
             {navItems.map((item) =>
               item.dropdown ? (
@@ -148,7 +148,7 @@ export function PublicHeader() {
                 <Link
                   key={item.label}
                   href={item.href}
-                  className="rounded px-3 py-2.5 text-sm text-[#94A3B8] hover:text-white hover:bg-[#1E293B] transition-colors"
+                  className="rounded px-3 py-2.5 text-sm text-[#94A3B8] hover:text-white hover:bg-[#243040] transition-colors"
                   onClick={() => setMobileOpen(false)}
                 >
                   {item.label}
@@ -165,7 +165,7 @@ export function PublicHeader() {
               </Link>
               <Link
                 href="/sign-up"
-                className="rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-blue-500 transition-colors"
+                className="rounded-md bg-[#4DA8DA] px-3 py-2 text-center text-sm font-semibold text-white hover:bg-[#3A8BC2] transition-colors"
                 onClick={() => setMobileOpen(false)}
               >
                 Kostenlos starten

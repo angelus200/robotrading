@@ -3,34 +3,34 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ─── Design Tokens — Robotrading Dark Theme ─────────────────────────────── */
+/* ─── Design Tokens — Robotrading Light Theme ────────────────────────────── */
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
   /* Hintergründe */
-  --background: #0F172A;
-  --foreground: #F8FAFC;
+  --background: #FFFFFF;
+  --foreground: #1A2332;
 
   /* Karten & Popovers */
-  --card: #1E293B;
-  --card-foreground: #F8FAFC;
-  --popover: #1E293B;
-  --popover-foreground: #F8FAFC;
+  --card: #F8FAFC;
+  --card-foreground: #1A2332;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A2332;
 
-  /* Primärfarbe — Robotrading Blau */
-  --primary: #2563EB;
+  /* Primärfarbe — Robotrading Hellblau */
+  --primary: #4DA8DA;
   --primary-foreground: #FFFFFF;
 
   /* Sekundär */
-  --secondary: #334155;
-  --secondary-foreground: #F8FAFC;
+  --secondary: #F1F5F9;
+  --secondary-foreground: #1A2332;
 
   /* Gedämpfte Töne */
-  --muted: #1E293B;
-  --muted-foreground: #94A3B8;
+  --muted: #F8FAFC;
+  --muted-foreground: #6B7280;
 
-  /* Akzent */
-  --accent: #1D4ED8;
+  /* Akzent — kräftiges Blau für CTAs */
+  --accent: #2563EB;
   --accent-foreground: #FFFFFF;
 
   /* Fehler */
@@ -38,9 +38,9 @@
   --destructive-foreground: #FFFFFF;
 
   /* Rahmen & Inputs */
-  --border: #334155;
-  --input: #334155;
-  --ring: #2563EB;
+  --border: #E5E7EB;
+  --input: #E5E7EB;
+  --ring: #4DA8DA;
 
   /* Border Radius */
   --radius: 0.5rem;
@@ -87,14 +87,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar-Styling für Dark Theme */
+/* Scrollbar-Styling */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--background);
+  background: var(--muted);
 }
 
 ::-webkit-scrollbar-thumb {

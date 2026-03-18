@@ -16,10 +16,10 @@ export function ContactForm() {
 
   if (status === 'sent') {
     return (
-      <div className="rounded-xl border border-green-500/30 bg-green-500/10 p-8 text-center">
+      <div className="rounded-xl border border-green-200 bg-green-50 p-8 text-center">
         <div className="mb-3 text-4xl">✓</div>
-        <h3 className="text-lg font-semibold text-white">Nachricht gesendet!</h3>
-        <p className="mt-2 text-sm text-[#94A3B8]">
+        <h3 className="text-lg font-semibold text-green-800">Nachricht gesendet!</h3>
+        <p className="mt-2 text-sm text-green-600">
           Wir melden uns schnellstmöglich bei Ihnen. Vielen Dank!
         </p>
       </div>
@@ -36,7 +36,7 @@ export function ContactForm() {
             required
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="w-full rounded-lg border border-[#334155] bg-[#0F172A] px-4 py-3 text-sm text-white placeholder-[#475569] focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+            className="w-full rounded-lg border border-[#E5E7EB] bg-white px-4 py-3 text-sm text-[#1A2332] placeholder-[#9CA3AF] focus:border-[#4DA8DA] focus:outline-none focus:ring-1 focus:ring-[#4DA8DA] transition-colors"
           />
         </div>
         <div>
@@ -46,7 +46,7 @@ export function ContactForm() {
             required
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
-            className="w-full rounded-lg border border-[#334155] bg-[#0F172A] px-4 py-3 text-sm text-white placeholder-[#475569] focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+            className="w-full rounded-lg border border-[#E5E7EB] bg-white px-4 py-3 text-sm text-[#1A2332] placeholder-[#9CA3AF] focus:border-[#4DA8DA] focus:outline-none focus:ring-1 focus:ring-[#4DA8DA] transition-colors"
           />
         </div>
       </div>
@@ -57,7 +57,7 @@ export function ContactForm() {
           rows={4}
           value={form.message}
           onChange={(e) => setForm({ ...form, message: e.target.value })}
-          className="w-full rounded-lg border border-[#334155] bg-[#0F172A] px-4 py-3 text-sm text-white placeholder-[#475569] focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors resize-none"
+          className="w-full rounded-lg border border-[#E5E7EB] bg-white px-4 py-3 text-sm text-[#1A2332] placeholder-[#9CA3AF] focus:border-[#4DA8DA] focus:outline-none focus:ring-1 focus:ring-[#4DA8DA] transition-colors resize-none"
         />
       </div>
       <div>
@@ -66,14 +66,14 @@ export function ContactForm() {
           placeholder="Ihre Telefonnummer"
           value={form.phone}
           onChange={(e) => setForm({ ...form, phone: e.target.value })}
-          className="w-full rounded-lg border border-[#334155] bg-[#0F172A] px-4 py-3 text-sm text-white placeholder-[#475569] focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+          className="w-full rounded-lg border border-[#E5E7EB] bg-white px-4 py-3 text-sm text-[#1A2332] placeholder-[#9CA3AF] focus:border-[#4DA8DA] focus:outline-none focus:ring-1 focus:ring-[#4DA8DA] transition-colors"
         />
       </div>
       <div className="text-right">
         <button
           type="submit"
           disabled={status === 'sending'}
-          className="rounded-lg bg-blue-600 px-8 py-3 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-60 transition-colors"
+          className="rounded-lg bg-[#4DA8DA] px-8 py-3 text-sm font-semibold text-white hover:bg-[#3A8BC2] disabled:opacity-60 transition-colors"
         >
           {status === 'sending' ? 'Wird gesendet…' : 'Senden'}
         </button>
