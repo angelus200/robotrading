@@ -1,5 +1,6 @@
 // Prisma Schema — robotrading.net
-// Datenbankmodell für automatisierte Handelsstrategien
+// Dev: SQLite | Prod: PostgreSQL
+// URL-Konfiguration in prisma.config.ts (Prisma 7)
 
 generator client {
   provider = "prisma-client"
@@ -7,8 +8,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
 }
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
@@ -87,7 +87,7 @@ model Strategy {
   name        String
   description String?
   status      StrategyStatus @default(DRAFT)
-  config      Json           @default("{}")
+  config      String         @default("{}")
   brokerId    String?
   isPublic    Boolean        @default(false)
   createdAt   DateTime       @default(now())
@@ -103,18 +103,17 @@ model Strategy {
 }
 
 model Portfolio {
-  id             String  @id @default(cuid())
+  id             String   @id @default(cuid())
   userId         String
-  strategyId     String  @unique
+  strategyId     String   @unique
   name           String
-  initialCapital Decimal @db.Decimal(18, 8)
-  currentValue   Decimal @db.Decimal(18, 8)
-  currency       String  @default("EUR")
-  totalPnl       Decimal @default(0) @db.Decimal(18, 8)
-  totalPnlPct    Decimal @default(0) @db.Decimal(8, 4)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  initialCapital Float
+  currentValue   Float
+  currency       String   @default("EUR")
+  totalPnl       Float    @default(0)
+  totalPnlPct    Float    @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   strategy Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
@@ -128,14 +127,14 @@ model Trade {
   symbol     String
   direction  TradeDirection
   status     TradeStatus    @default(OPEN)
-  entryPrice Decimal        @db.Decimal(18, 8)
-  exitPrice  Decimal?       @db.Decimal(18, 8)
-  quantity   Decimal        @db.Decimal(18, 8)
-  pnl        Decimal?       @db.Decimal(18, 8)
-  pnlPct     Decimal?       @db.Decimal(8, 4)
+  entryPrice Float
+  exitPrice  Float?
+  quantity   Float
+  pnl        Float?
+  pnlPct     Float?
   openedAt   DateTime       @default(now())
   closedAt   DateTime?
-  metadata   Json           @default("{}")
+  metadata   String         @default("{}")
   createdAt  DateTime       @default(now())
   updatedAt  DateTime       @updatedAt
 
@@ -154,8 +153,8 @@ model Broker {
   logoUrl     String?
   website     String?
   isActive    Boolean  @default(true)
-  features    Json     @default("[]")
-  minDeposit  Decimal? @db.Decimal(18, 2)
+  features    String   @default("[]")
+  minDeposit  Float?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -174,7 +173,7 @@ model BlogPost {
   published   Boolean   @default(false)
   publishedAt DateTime?
   authorId    String
-  tags        String[]
+  tags        String    @default("[]")
   readingTime Int?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

@@ -1,6 +1,6 @@
 import 'server-only'
 import { getDb } from '@/lib/db'
-import type { UserRole } from '@/generated/prisma'
+import type { UserRole } from '@/generated/prisma/client'
 
 // Typen für Clerk-Webhook-Payload
 interface ClerkUserData {

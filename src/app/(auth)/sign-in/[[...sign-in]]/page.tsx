@@ -1,12 +1,22 @@
-import { SignIn } from '@clerk/nextjs'
+import { redirect } from 'next/navigation'
+import { IS_DEV_MOCK } from '@/lib/dev-mode'
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = {
-  title: 'Anmelden — Robotrading',
+export const metadata: Metadata = { title: 'Anmelden — Robotrading' }
+
+export default function SignInPage() {
+  // Dev-Mode: direkt zum Dashboard weiterleiten
+  if (IS_DEV_MOCK) {
+    redirect('/dashboard')
+  }
+
+  // Prod-Mode: Clerk Sign-In Komponente
+  // (Lazy-Import um Dev-Mode nicht zu beeinflussen)
+  return <ClerkSignIn />
 }
 
-// Clerk Sign-In Komponente — Catch-All-Route für alle Clerk-Auth-Flows
-export default function SignInPage() {
+async function ClerkSignIn() {
+  const { SignIn } = await import('@clerk/nextjs')
   return (
     <SignIn
       appearance={{
@@ -16,14 +26,11 @@ export default function SignInPage() {
           headerTitle: 'text-foreground',
           headerSubtitle: 'text-muted-foreground',
           formButtonPrimary: 'bg-primary hover:bg-accent text-white',
-          formFieldInput:
-            'bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-primary',
+          formFieldInput: 'bg-input border-border text-foreground focus:ring-primary',
           footerActionLink: 'text-primary hover:text-accent',
-          identityPreviewText: 'text-foreground',
           dividerLine: 'bg-border',
           dividerText: 'text-muted-foreground',
-          socialButtonsBlockButton:
-            'border-border text-foreground hover:bg-secondary',
+          socialButtonsBlockButton: 'border-border text-foreground hover:bg-secondary',
         },
       }}
     />

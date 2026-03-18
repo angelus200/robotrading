@@ -1,28 +1,30 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
-// Routen die Authentifizierung erfordern
+// Dev-Mode: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY === 'pk_test_dummy'
+const IS_DEV_MOCK =
+  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY === 'pk_test_dummy'
+
 const isProtectedRoute = createRouteMatcher([
   '/dashboard(.*)',
   '/strategies(.*)',
   '/portfolio(.*)',
   '/settings(.*)',
+  '/admin(.*)',
 ])
 
-// Admin-Routen — zusätzlich Rollen-Check im Layout
-const isAdminRoute = createRouteMatcher(['/admin(.*)'])
-
-export default clerkMiddleware(async (auth, req) => {
-  // Portal-Routen schützen
-  if (isProtectedRoute(req) || isAdminRoute(req)) {
-    await auth.protect()
-  }
-})
+// In Dev-Mode: einfacher Passthrough, kein Clerk
+// In Prod-Mode: Clerk schützt alle Portal- und Admin-Routen
+export default IS_DEV_MOCK
+  ? (_req: NextRequest) => NextResponse.next()
+  : clerkMiddleware(async (auth, req) => {
+      if (isProtectedRoute(req)) await auth.protect()
+    })
 
 export const config = {
   matcher: [
-    // Next.js-Interna und statische Dateien überspringen
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // API-Routen immer prüfen
     '/(api|trpc)(.*)',
   ],
 }

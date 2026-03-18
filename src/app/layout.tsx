@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import { Plus_Jakarta_Sans } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
+import { IS_DEV_MOCK } from '@/lib/dev-mode'
 import './globals.css'
 
-// Plus Jakarta Sans — moderne Schriftart für Trading-Plattform
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
   variable: '--font-plus-jakarta-sans',
@@ -25,8 +25,6 @@ export const metadata: Metadata = {
     locale: 'de_DE',
     url: 'https://robotrading.net',
     siteName: 'Robotrading',
-    title: 'Robotrading — Automatisierter Handel',
-    description: 'Professionelles Algorithmic Trading für moderne Anleger.',
   },
 }
 
@@ -35,12 +33,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  return (
-    <ClerkProvider>
-      {/* Font-Variable auf html-Element — wichtig für Tailwind v4 @theme inline */}
-      <html lang="de" className={plusJakartaSans.variable}>
-        <body className="antialiased">{children}</body>
-      </html>
-    </ClerkProvider>
+  const content = (
+    <html lang="de" className={plusJakartaSans.variable}>
+      <body className="antialiased">{children}</body>
+    </html>
   )
+
+  // In Dev-Mode kein ClerkProvider — Dummy-Keys würden einen Fehler werfen
+  if (IS_DEV_MOCK) return content
+
+  return <ClerkProvider>{content}</ClerkProvider>
 }

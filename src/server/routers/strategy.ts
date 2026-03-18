@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { router, protectedProcedure } from '@/server/trpc'
 import { getDb } from '@/lib/db'
 import { TRPCError } from '@trpc/server'
-import { StrategyStatus } from '@/generated/prisma'
+import { StrategyStatus } from '@/generated/prisma/client'
 
 // Eingabe-Schema für Strategie-Erstellung/-Aktualisierung
 const strategyInput = z.object({

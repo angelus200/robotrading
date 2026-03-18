@@ -1,8 +1,8 @@
 import 'server-only'
 import { initTRPC, TRPCError } from '@trpc/server'
-import { auth } from '@clerk/nextjs/server'
 import superjson from 'superjson'
 import { ZodError } from 'zod'
+import { IS_DEV_MOCK, MOCK_USER_ID } from '@/lib/dev-mode'
 
 // ─── Kontext ──────────────────────────────────────────────────────────────────
 
@@ -10,8 +10,12 @@ export interface TRPCContext {
   userId: string | null
 }
 
-// Kontext-Factory — wird pro Request aufgerufen
 export async function createTRPCContext(): Promise<TRPCContext> {
+  // Dev-Mode: Mock-User zurückgeben
+  if (IS_DEV_MOCK) {
+    return { userId: MOCK_USER_ID }
+  }
+  const { auth } = await import('@clerk/nextjs/server')
   const { userId } = await auth()
   return { userId }
 }
@@ -25,7 +29,6 @@ const t = initTRPC.context<TRPCContext>().create({
       ...shape,
       data: {
         ...shape.data,
-        // Zod-Validierungsfehler strukturiert zurückgeben
         zodError:
           error.cause instanceof ZodError ? error.cause.flatten() : null,
       },
@@ -33,26 +36,15 @@ const t = initTRPC.context<TRPCContext>().create({
   },
 })
 
-// ─── Router & Procedure Exports ───────────────────────────────────────────────
+// ─── Exports ──────────────────────────────────────────────────────────────────
 
 export const router = t.router
 export const createCallerFactory = t.createCallerFactory
-
-// Öffentliche Procedure — kein Auth erforderlich
 export const publicProcedure = t.procedure
 
-// Geschützte Procedure — wirft UNAUTHORIZED wenn nicht eingeloggt
 export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   if (!ctx.userId) {
-    throw new TRPCError({
-      code: 'UNAUTHORIZED',
-      message: 'Nicht authentifiziert. Bitte einloggen.',
-    })
+    throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Nicht authentifiziert.' })
   }
-  return next({
-    ctx: {
-      ...ctx,
-      userId: ctx.userId, // userId ist jetzt NonNullable
-    },
-  })
+  return next({ ctx: { ...ctx, userId: ctx.userId } })
 })

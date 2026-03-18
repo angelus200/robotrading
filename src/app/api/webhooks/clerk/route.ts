@@ -1,19 +1,17 @@
 import { headers } from 'next/headers'
-import { Webhook } from 'svix'
 import { upsertUser, deleteUser } from '@/server/services/user.service'
 
-// Clerk-Webhook-Handler — synchronisiert Clerk-User mit der Datenbank
 export async function POST(req: Request) {
   const webhookSecret = process.env.CLERK_WEBHOOK_SECRET
 
-  if (!webhookSecret) {
-    return Response.json(
-      { error: 'CLERK_WEBHOOK_SECRET nicht konfiguriert' },
-      { status: 500 }
-    )
+  // Graceful fail wenn kein echter Webhook-Secret konfiguriert ist
+  if (!webhookSecret || webhookSecret === 'whsec_dummy') {
+    console.warn('[Clerk Webhook] Kein echter CLERK_WEBHOOK_SECRET — Request ignoriert')
+    return Response.json({ received: false, reason: 'no_secret' }, { status: 200 })
   }
 
-  // Svix-Signatur verifizieren
+  const { Webhook } = await import('svix')
+
   const headerPayload = await headers()
   const svixId = headerPayload.get('svix-id')
   const svixTimestamp = headerPayload.get('svix-timestamp')
@@ -50,7 +48,6 @@ export async function POST(req: Request) {
 
   const { type, data } = event
 
-  // Primäre E-Mail-Adresse ermitteln
   const primaryEmail = data.email_addresses.find(
     (e) => e.id === data.primary_email_address_id
   )?.email_address
@@ -64,8 +61,7 @@ export async function POST(req: Request) {
       await upsertUser({
         clerkId: data.id,
         email: primaryEmail!,
-        name:
-          [data.first_name, data.last_name].filter(Boolean).join(' ') || undefined,
+        name: [data.first_name, data.last_name].filter(Boolean).join(' ') || undefined,
         avatarUrl: data.image_url ?? undefined,
       })
     } else if (type === 'user.deleted') {

@@ -1,17 +1,14 @@
-import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
-import { UserButton } from '@clerk/nextjs'
 import { TRPCProvider } from '@/components/providers/trpc-provider'
+import { getAuth } from '@/lib/auth'
+import { IS_DEV_MOCK, MOCK_USER } from '@/lib/dev-mode'
 
-// Portal-Layout — geschützter Bereich für eingeloggte User
 export default async function PortalLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const { userId } = await auth()
-
-  // Doppelte Absicherung neben Middleware
+  const { userId } = await getAuth()
   if (!userId) redirect('/sign-in')
 
   return (
@@ -23,6 +20,11 @@ export default async function PortalLayout({
             <a href="/dashboard" className="text-xl font-bold text-primary">
               Robotrading
             </a>
+            {IS_DEV_MOCK && (
+              <span className="ml-2 rounded bg-yellow-500/20 px-1.5 py-0.5 text-xs font-bold text-yellow-400">
+                DEV
+              </span>
+            )}
           </div>
           <nav className="flex-1 overflow-y-auto p-4">
             <ul className="space-y-1">
@@ -40,27 +42,47 @@ export default async function PortalLayout({
             </ul>
           </nav>
           <div className="border-t border-border p-4">
-            <div className="flex items-center gap-3">
-              <UserButton afterSignOutUrl="/landing" />
-              <span className="text-sm text-muted-foreground">Profil</span>
-            </div>
+            {/* Dev-Mode: einfacher Platzhalter statt UserButton */}
+            <DevAwareUserButton />
           </div>
         </aside>
 
-        {/* Hauptinhalt */}
         <div className="flex flex-1 flex-col">
-          {/* Mobiler Header */}
           <header className="flex h-16 items-center justify-between border-b border-border bg-card px-6 md:hidden">
             <a href="/dashboard" className="text-lg font-bold text-primary">
               Robotrading
             </a>
-            <UserButton afterSignOutUrl="/landing" />
+            <DevAwareUserButton />
           </header>
-
           <main className="flex-1 overflow-y-auto p-6">{children}</main>
         </div>
       </div>
     </TRPCProvider>
+  )
+}
+
+// Zeigt echten UserButton oder Dev-Platzhalter
+async function DevAwareUserButton() {
+  if (IS_DEV_MOCK) {
+    return (
+      <div className="flex items-center gap-3">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
+          {MOCK_USER.name[0]}
+        </div>
+        <div>
+          <p className="text-xs font-medium text-foreground">{MOCK_USER.name}</p>
+          <p className="text-xs text-yellow-400">Dev Mock</p>
+        </div>
+      </div>
+    )
+  }
+
+  const { UserButton } = await import('@clerk/nextjs')
+  return (
+    <div className="flex items-center gap-3">
+      <UserButton afterSignOutUrl="/landing" />
+      <span className="text-sm text-muted-foreground">Profil</span>
+    </div>
   )
 }
 

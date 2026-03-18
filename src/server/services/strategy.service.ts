@@ -1,7 +1,6 @@
 import 'server-only'
 import { getDb } from '@/lib/db'
-import { StrategyStatus } from '@/generated/prisma'
-import { Decimal } from '@prisma/client/runtime/library'
+import { StrategyStatus } from '@/generated/prisma/client'
 
 // Strategie-Performance berechnen
 export async function calculateStrategyPerformance(strategyId: string) {
@@ -11,14 +10,14 @@ export async function calculateStrategyPerformance(strategyId: string) {
     select: { pnl: true, pnlPct: true },
   })
 
-  const totalPnl = trades.reduce((sum, t) => sum + Number(t.pnl ?? 0), 0)
-  const winningTrades = trades.filter((t) => Number(t.pnl ?? 0) > 0).length
+  const totalPnl = trades.reduce((sum, t) => sum + (t.pnl ?? 0), 0)
+  const winningTrades = trades.filter((t) => (t.pnl ?? 0) > 0).length
   const winRate = trades.length > 0 ? (winningTrades / trades.length) * 100 : 0
 
   return { totalPnl, winRate, tradeCount: trades.length }
 }
 
-// Portfolio nach Strategie-Performance aktualisieren
+// Portfolio-Werte aktualisieren (Float statt Decimal für SQLite-Kompatibilität)
 export async function updatePortfolioValue(
   strategyId: string,
   newValue: number,
@@ -28,15 +27,11 @@ export async function updatePortfolioValue(
   const db = getDb()
   return db.portfolio.updateMany({
     where: { strategyId },
-    data: {
-      currentValue: new Decimal(newValue),
-      totalPnl: new Decimal(totalPnl),
-      totalPnlPct: new Decimal(totalPnlPct),
-    },
+    data: { currentValue: newValue, totalPnl, totalPnlPct },
   })
 }
 
-// Alle aktiven Strategien abrufen (für Scheduler)
+// Alle aktiven Strategien (für Scheduler/Cron)
 export async function getActiveStrategies() {
   const db = getDb()
   return db.strategy.findMany({
