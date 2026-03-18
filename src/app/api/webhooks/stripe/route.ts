@@ -22,7 +22,7 @@ export async function POST(req: Request) {
 
   const Stripe = (await import('stripe')).default
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2025-02-24.acacia',
+    apiVersion: '2026-02-25.clover',
     typescript: true,
   })
 
@@ -56,6 +56,9 @@ export async function POST(req: Request) {
       if (!user) return Response.json({ received: true })
 
       const item = sub.items.data[0]
+      // Stripe API 2026-02-25.clover: current_period_start/end auf SubscriptionItem verschoben
+      const periodStart = new Date(item.current_period_start * 1000)
+      const periodEnd = new Date(item.current_period_end * 1000)
       await db.subscription.upsert({
         where: { stripeSubscriptionId: sub.id },
         create: {
@@ -64,16 +67,16 @@ export async function POST(req: Request) {
           stripePriceId: item.price.id,
           stripeProductId: item.price.product as string,
           status: statusMap[sub.status] ?? 'INACTIVE',
-          currentPeriodStart: new Date(sub.current_period_start * 1000),
-          currentPeriodEnd: new Date(sub.current_period_end * 1000),
+          currentPeriodStart: periodStart,
+          currentPeriodEnd: periodEnd,
           cancelAtPeriodEnd: sub.cancel_at_period_end,
         },
         update: {
           stripePriceId: item.price.id,
           stripeProductId: item.price.product as string,
           status: statusMap[sub.status] ?? 'INACTIVE',
-          currentPeriodStart: new Date(sub.current_period_start * 1000),
-          currentPeriodEnd: new Date(sub.current_period_end * 1000),
+          currentPeriodStart: periodStart,
+          currentPeriodEnd: periodEnd,
           cancelAtPeriodEnd: sub.cancel_at_period_end,
         },
       })

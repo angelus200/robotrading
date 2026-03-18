@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Robotrading — Automatisierter Handel für moderne Anleger',
@@ -28,12 +29,12 @@ export default function LandingPage() {
             und führt sie vollautomatisch aus — 24/7, ohne manuelles Eingreifen.
           </p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <a
+            <Link
               href="/sign-up"
               className="rounded-lg bg-primary px-8 py-3 text-base font-semibold text-white shadow-lg hover:bg-accent transition-colors"
             >
               Jetzt kostenlos starten
-            </a>
+            </Link>
             <a
               href="#features"
               className="rounded-lg border border-border px-8 py-3 text-base font-semibold text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
@@ -74,12 +75,12 @@ export default function LandingPage() {
           <p className="mt-4 text-muted-foreground">
             Starte heute und verbinde deine erste Handelsstrategie.
           </p>
-          <a
+          <Link
             href="/sign-up"
             className="mt-8 inline-block rounded-lg bg-primary px-10 py-3 font-semibold text-white hover:bg-accent transition-colors"
           >
             Kostenlos registrieren
-          </a>
+          </Link>
         </div>
       </section>
     </>

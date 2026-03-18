@@ -9,7 +9,7 @@ const strategyInput = z.object({
   name: z.string().min(1).max(100),
   description: z.string().max(500).optional(),
   brokerId: z.string().cuid().optional(),
-  config: z.record(z.unknown()).optional(),
+  config: z.record(z.string(), z.unknown()).optional(),
   isPublic: z.boolean().optional(),
 })
 
@@ -71,7 +71,7 @@ export const strategyRouter = router({
       return db.strategy.create({
         data: {
           ...input,
-          config: input.config ?? {},
+          config: JSON.stringify(input.config ?? {}),
           userId: user.id,
         },
       })
@@ -87,7 +87,13 @@ export const strategyRouter = router({
         where: { id, user: { clerkId: ctx.userId } },
       })
       if (!existing) throw new TRPCError({ code: 'NOT_FOUND' })
-      return db.strategy.update({ where: { id }, data })
+      return db.strategy.update({
+        where: { id },
+        data: {
+          ...data,
+          ...(data.config !== undefined && { config: JSON.stringify(data.config) }),
+        },
+      })
     }),
 
   // Status ändern (Starten/Pausieren/Stoppen)

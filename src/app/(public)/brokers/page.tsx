@@ -10,11 +10,16 @@ export const metadata: Metadata = {
 export const revalidate = 3600
 
 async function getBrokers() {
-  const db = getDb()
-  return db.broker.findMany({
-    where: { isActive: true },
-    orderBy: { name: 'asc' },
-  })
+  try {
+    const db = getDb()
+    return db.broker.findMany({
+      where: { isActive: true },
+      orderBy: { name: 'asc' },
+    })
+  } catch {
+    // Build-Zeit ohne DB-Verbindung: leeres Array als Fallback
+    return []
+  }
 }
 
 export default async function BrokersPage() {
@@ -43,6 +48,7 @@ export default async function BrokersPage() {
               className="rounded-xl border border-border bg-card p-6 hover:border-primary/50 transition-colors"
             >
               {broker.logoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={broker.logoUrl}
                   alt={`${broker.name} Logo`}

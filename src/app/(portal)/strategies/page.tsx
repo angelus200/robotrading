@@ -1,6 +1,5 @@
 'use client'
 
-import type { Metadata } from 'next'
 import { trpc } from '@/lib/trpc'
 
 // Hinweis: Metadata-Export funktioniert nur in Server-Komponenten

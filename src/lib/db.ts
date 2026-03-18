@@ -9,11 +9,9 @@ const globalForPrisma = globalThis as unknown as {
 
 function createPrismaClient(): PrismaClient {
   const dbUrl = process.env.DATABASE_URL ?? 'file:./dev.db'
-  const logLevel = process.env.NODE_ENV === 'development'
-    ? (['error', 'warn'] as const)
-    : (['error'] as const)
 
-  // Lokal mit SQLite (file:-Protokoll) — nur in IS_DEV_MOCK-Modus, DB wird nie wirklich abgefragt
+  // Lokal mit SQLite (file:-Protokoll)
+  // In IS_DEV_MOCK-Modus wird die DB nie wirklich abgefragt
   if (dbUrl.startsWith('file:')) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3')
@@ -23,11 +21,17 @@ function createPrismaClient(): PrismaClient {
     const resolvedPath = path.resolve(process.cwd(), dbPath)
     const sqlite = new Database(resolvedPath)
     const adapter = new PrismaBetterSqlite3(sqlite)
-    return new PrismaClient({ adapter, log: logLevel })
+    return new PrismaClient({ adapter })
   }
 
   // Produktion: PostgreSQL via DATABASE_URL (Railway, Neon, etc.)
-  return new PrismaClient({ log: logLevel })
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { Pool } = require('pg')
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { PrismaPg } = require('@prisma/adapter-pg')
+  const pool = new Pool({ connectionString: dbUrl })
+  const adapter = new PrismaPg(pool)
+  return new PrismaClient({ adapter })
 }
 
 export function getDb(): PrismaClient {

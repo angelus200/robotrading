@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
+import Link from 'next/link'
 import { getDb } from '@/lib/db'
 
 export const metadata: Metadata = {
@@ -10,21 +12,26 @@ export const metadata: Metadata = {
 export const revalidate = 3600
 
 async function getBlogPosts() {
-  const db = getDb()
-  return db.blogPost.findMany({
-    where: { published: true },
-    orderBy: { publishedAt: 'desc' },
-    select: {
-      id: true,
-      slug: true,
-      title: true,
-      excerpt: true,
-      coverImage: true,
-      publishedAt: true,
-      tags: true,
-      readingTime: true,
-    },
-  })
+  try {
+    const db = getDb()
+    return db.blogPost.findMany({
+      where: { published: true },
+      orderBy: { publishedAt: 'desc' },
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        excerpt: true,
+        coverImage: true,
+        publishedAt: true,
+        tags: true,
+        readingTime: true,
+      },
+    })
+  } catch {
+    // Build-Zeit ohne DB-Verbindung: leeres Array als Fallback
+    return []
+  }
 }
 
 export default async function BlogPage() {
@@ -43,23 +50,26 @@ export default async function BlogPage() {
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2">
-          {posts.map((post) => (
-            <a
+          {posts.map((post) => {
+            const tags = JSON.parse(post.tags) as string[]
+            return (
+            <Link
               key={post.id}
               href={`/blog/${post.slug}`}
               className="group rounded-xl border border-border bg-card p-6 hover:border-primary/50 transition-all hover:shadow-lg"
             >
               {post.coverImage && (
                 <div className="mb-4 aspect-video w-full overflow-hidden rounded-lg bg-muted">
-                  <img
+                  <Image
                     src={post.coverImage}
                     alt={post.title}
-                    className="h-full w-full object-cover group-hover:scale-105 transition-transform"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform"
                   />
                 </div>
               )}
               <div className="flex flex-wrap gap-2 mb-3">
-                {post.tags.slice(0, 3).map((tag) => (
+                {tags.slice(0, 3).map((tag) => (
                   <span
                     key={tag}
                     className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
@@ -84,8 +94,9 @@ export default async function BlogPage() {
                 )}
                 {post.readingTime && <span>{post.readingTime} Min. Lesezeit</span>}
               </div>
-            </a>
-          ))}
+            </Link>
+          )})}
+
         </div>
       )}
     </div>

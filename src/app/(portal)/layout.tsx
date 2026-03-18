@@ -80,7 +80,7 @@ async function DevAwareUserButton() {
   const { UserButton } = await import('@clerk/nextjs')
   return (
     <div className="flex items-center gap-3">
-      <UserButton afterSignOutUrl="/landing" />
+      <UserButton />
       <span className="text-sm text-muted-foreground">Profil</span>
     </div>
   )
